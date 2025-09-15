@@ -4,7 +4,9 @@
       "Bash(python:*)",
       "Bash(dir)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(echo \"Ready to push to GitHub. Please run these commands with your actual GitHub repository URL:\n\ngit remote add origin https://github.com/yourusername/elven-vs-orc-chess.git\ngit branch -M main  \ngit push -u origin main\n\nReplace ''yourusername'' and ''elven-vs-orc-chess'' with your actual GitHub username and repository name.\")"
     ],
     "deny": [],
     "ask": []
