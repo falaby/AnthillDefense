@@ -1,0 +1,30 @@
+{
+  "name": "elven-vs-orc-chess",
+  "version": "1.0.0",
+  "description": "An epic fantasy chess game featuring elven armies vs orc/gargoyle hordes with stunning visual effects",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site - no build needed'",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "chess",
+    "game",
+    "fantasy",
+    "elves",
+    "orcs",
+    "javascript",
+    "web-game"
+  ],
+  "author": "Scott",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/elven-vs-orc-chess.git"
+  },
+  "homepage": "https://your-vercel-app.vercel.app",
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}
