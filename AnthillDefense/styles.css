@@ -1,0 +1,323 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Cinzel', serif;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d1b69 100%);
+    color: #e6e6fa;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.particle-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(2px 2px at 20% 30%, #fff, transparent),
+        radial-gradient(2px 2px at 40% 70%, #fff9, transparent),
+        radial-gradient(1px 1px at 90% 40%, #fff6, transparent);
+    background-size: 300px 300px, 200px 200px, 100px 100px;
+    animation: sparkle 20s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes sparkle {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-100vh); }
+}
+
+.game-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+}
+
+.game-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.game-title {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 3.5rem;
+    color: #ffd700;
+    text-shadow: 
+        0 0 10px #ffd700,
+        0 0 20px #ffd700,
+        0 0 30px #ffa500,
+        2px 2px 5px rgba(0,0,0,0.8);
+    margin-bottom: 20px;
+    animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffa500; }
+    to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700, 0 0 40px #ffa500; }
+}
+
+.game-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.current-player {
+    display: flex;
+    gap: 20px;
+}
+
+.player-indicator {
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 25px;
+    border: 2px solid transparent;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.player-indicator.active {
+    background: linear-gradient(45deg, #ffd700, #ffa500);
+    color: #000;
+    border-color: #ffd700;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255,215,0,0.5);
+}
+
+.game-info {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.game-board-container {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0;
+}
+
+.board-wrapper {
+    position: relative;
+}
+
+.board-glow {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    background: linear-gradient(45deg, #ffd700, #ffa500, #ff6b35, #8b00ff);
+    border-radius: 20px;
+    filter: blur(15px);
+    opacity: 0.3;
+    animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 80px);
+    grid-template-rows: repeat(8, 80px);
+    border: 4px solid #ffd700;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+    box-shadow: 
+        0 0 30px rgba(255,215,0,0.4),
+        inset 0 0 20px rgba(0,0,0,0.3);
+}
+
+.square {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-size: cover;
+    background-position: center;
+}
+
+.square.light {
+    background: linear-gradient(135deg, #f0d9b5 0%, #d4af8c 100%);
+}
+
+.square.dark {
+    background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+}
+
+.square:hover {
+    transform: scale(1.05);
+    box-shadow: inset 0 0 20px rgba(255,215,0,0.3);
+}
+
+.square.selected {
+    background: radial-gradient(circle, #ffd700 0%, #ffa500 100%) !important;
+    box-shadow: 
+        0 0 20px #ffd700,
+        inset 0 0 20px rgba(255,255,255,0.3);
+    animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+    from { box-shadow: 0 0 20px #ffd700, inset 0 0 20px rgba(255,255,255,0.3); }
+    to { box-shadow: 0 0 30px #ffd700, inset 0 0 30px rgba(255,255,255,0.5); }
+}
+
+.square.valid-move {
+    background: radial-gradient(circle, #00ff00 0%, #32cd32 100%) !important;
+    animation: validMove 1s ease-in-out infinite alternate;
+}
+
+@keyframes validMove {
+    from { box-shadow: 0 0 15px #00ff00; }
+    to { box-shadow: 0 0 25px #00ff00; }
+}
+
+.square.capture {
+    background: radial-gradient(circle, #ff4500 0%, #dc143c 100%) !important;
+    animation: capture 1s ease-in-out infinite alternate;
+}
+
+@keyframes capture {
+    from { box-shadow: 0 0 15px #ff4500; }
+    to { box-shadow: 0 0 25px #ff4500; }
+}
+
+.piece {
+    font-size: 3.5rem;
+    text-shadow: 
+        2px 2px 4px rgba(0,0,0,0.8),
+        0 0 10px currentColor;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    z-index: 3;
+}
+
+.piece:hover {
+    transform: scale(1.2) rotate(5deg);
+    filter: brightness(1.3);
+}
+
+.piece.white {
+    color: #e6e6fa;
+    filter: drop-shadow(0 0 8px #ffd700);
+}
+
+.piece.black {
+    color: #8b0000;
+    filter: drop-shadow(0 0 8px #ff4500);
+}
+
+.captured-pieces {
+    display: flex;
+    justify-content: space-around;
+    margin: 30px 0;
+    gap: 40px;
+}
+
+.captured-section {
+    flex: 1;
+    text-align: center;
+}
+
+.captured-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+}
+
+.captured-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    min-height: 60px;
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    border: 1px solid rgba(255,215,0,0.3);
+}
+
+.captured-container .piece {
+    font-size: 2rem;
+    opacity: 0.7;
+    filter: grayscale(0.5);
+}
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.game-btn {
+    padding: 15px 30px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, #4a4a4a, #6a6a6a);
+    color: #ffd700;
+    border: 2px solid #ffd700;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px currentColor;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.game-btn:hover {
+    background: linear-gradient(45deg, #ffd700, #ffa500);
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,215,0,0.4);
+}
+
+.game-btn:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .chess-board {
+        grid-template-columns: repeat(8, 60px);
+        grid-template-rows: repeat(8, 60px);
+    }
+    
+    .square {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .piece {
+        font-size: 2.5rem;
+    }
+    
+    .game-title {
+        font-size: 2.5rem;
+    }
+    
+    .game-status {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
