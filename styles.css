@@ -615,3 +615,147 @@ body::after {
     z-index: 1000;
     opacity: 0.3;
 }
+
+/* Snake Game Styles */
+.snake-container {
+    max-width: 1400px;
+    margin: 100px auto 0;
+    padding: 20px;
+    position: relative;
+}
+
+.snake-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.snake-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 3rem;
+    color: #ff0066;
+    text-shadow:
+        0 0 10px #ff0066,
+        0 0 20px #ff0066,
+        0 0 30px #cc0044,
+        0 0 40px #990033,
+        2px 2px 5px rgba(0,0,0,0.8);
+    margin-bottom: 20px;
+    animation: snakeGlow 3s ease-in-out infinite alternate;
+    letter-spacing: 3px;
+}
+
+@keyframes snakeGlow {
+    from { text-shadow: 0 0 10px #ff0066, 0 0 20px #ff0066, 0 0 30px #cc0044, 0 0 40px #990033; }
+    to { text-shadow: 0 0 20px #ff0066, 0 0 30px #ff0066, 0 0 40px #cc0044, 0 0 50px #990033; }
+}
+
+.snake-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+
+.snake-game-area {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.snake-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    min-width: 150px;
+}
+
+.snake-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.snake-btn {
+    padding: 12px 20px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, #440022, #660033);
+    color: #ff0066;
+    border: 2px solid #ff0066;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px currentColor;
+    letter-spacing: 1px;
+}
+
+.snake-btn:hover {
+    background: linear-gradient(45deg, #ff0066, #cc0044);
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,0,102,0.4);
+}
+
+.snake-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.snake-board-container {
+    position: relative;
+}
+
+#snake-board {
+    background: linear-gradient(135deg, #000511 0%, #001122 100%);
+    border: 3px solid #ff0066;
+    border-radius: 10px;
+    box-shadow:
+        0 0 30px rgba(255,0,102,0.6),
+        inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+.snake-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,0,102,0.02) 50%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .snake-title {
+        font-size: 2rem;
+    }
+
+    .snake-game-area {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .snake-stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    #snake-board {
+        width: 400px;
+        height: 400px;
+    }
+
+    .snake-sidebar {
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        min-width: auto;
+    }
+}
