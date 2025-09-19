@@ -933,12 +933,16 @@ class SnakeGame {
         this.ctx = this.canvas.getContext('2d');
 
         this.gridSize = 20;
-        this.tileCount = this.canvas.width / this.gridSize;
+        this.tilesX = this.canvas.width / this.gridSize;
+        this.tilesY = this.canvas.height / this.gridSize;
+
+        // Define the playable area (L-shaped track around game areas)
+        this.createCustomBoard();
 
         this.snake = [
-            {x: 10, y: 10}
+            {x: 5, y: 5}
         ];
-        this.food = {x: 15, y: 15};
+        this.food = this.generateFood();
         this.dx = 0;
         this.dy = 0;
         this.score = 0;
@@ -953,6 +957,57 @@ class SnakeGame {
         this.setupKeyboardControls();
         this.updateStats();
         this.draw();
+    }
+
+    createCustomBoard() {
+        // Create a custom board shape that goes around the chess and tetris areas
+        this.validTiles = new Set();
+
+        // Define blocked areas (where chess and tetris games would be)
+        const chessArea = {
+            x: Math.floor(this.tilesX * 0.15),
+            y: Math.floor(this.tilesY * 0.15),
+            width: Math.floor(this.tilesX * 0.35),
+            height: Math.floor(this.tilesY * 0.4)
+        };
+
+        const tetrisArea = {
+            x: Math.floor(this.tilesX * 0.15),
+            y: Math.floor(this.tilesY * 0.6),
+            width: Math.floor(this.tilesX * 0.35),
+            height: Math.floor(this.tilesY * 0.25)
+        };
+
+        // Add all tiles as valid, then remove blocked areas
+        for (let x = 0; x < this.tilesX; x++) {
+            for (let y = 0; y < this.tilesY; y++) {
+                // Skip border tiles
+                if (x === 0 || x === this.tilesX - 1 || y === 0 || y === this.tilesY - 1) {
+                    continue;
+                }
+
+                // Skip chess area
+                if (x >= chessArea.x && x < chessArea.x + chessArea.width &&
+                    y >= chessArea.y && y < chessArea.y + chessArea.height) {
+                    continue;
+                }
+
+                // Skip tetris area
+                if (x >= tetrisArea.x && x < tetrisArea.x + tetrisArea.width &&
+                    y >= tetrisArea.y && y < tetrisArea.y + tetrisArea.height) {
+                    continue;
+                }
+
+                this.validTiles.add(`${x},${y}`);
+            }
+        }
+
+        // Store blocked areas for rendering
+        this.blockedAreas = [chessArea, tetrisArea];
+    }
+
+    isValidTile(x, y) {
+        return this.validTiles.has(`${x},${y}`);
     }
 
     setupEventListeners() {
@@ -1039,7 +1094,7 @@ class SnakeGame {
             clearInterval(this.gameLoop);
         }
 
-        this.snake = [{x: 10, y: 10}];
+        this.snake = [{x: 5, y: 5}];
         this.food = this.generateFood();
         this.dx = 0;
         this.dy = 0;
@@ -1084,8 +1139,8 @@ class SnakeGame {
     checkCollision() {
         const head = this.snake[0];
 
-        // Wall collision
-        if (head.x < 0 || head.x >= this.tileCount || head.y < 0 || head.y >= this.tileCount) {
+        // Check if head is in a valid tile
+        if (!this.isValidTile(head.x, head.y)) {
             return true;
         }
 
@@ -1124,15 +1179,25 @@ class SnakeGame {
     }
 
     generateFood() {
-        let newFood;
-        do {
-            newFood = {
-                x: Math.floor(Math.random() * this.tileCount),
-                y: Math.floor(Math.random() * this.tileCount)
-            };
-        } while (this.snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
+        // Get all valid positions that aren't occupied by snake
+        const validPositions = [];
 
-        return newFood;
+        for (let x = 0; x < this.tilesX; x++) {
+            for (let y = 0; y < this.tilesY; y++) {
+                if (this.isValidTile(x, y) &&
+                    !this.snake.some(segment => segment.x === x && segment.y === y)) {
+                    validPositions.push({x, y});
+                }
+            }
+        }
+
+        if (validPositions.length === 0) {
+            // Game won! (though unlikely with this board size)
+            return {x: -1, y: -1};
+        }
+
+        const randomIndex = Math.floor(Math.random() * validPositions.length);
+        return validPositions[randomIndex];
     }
 
     gameOver() {
@@ -1166,56 +1231,101 @@ class SnakeGame {
         this.ctx.fillStyle = '#000511';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw grid
-        this.ctx.strokeStyle = '#002244';
-        this.ctx.lineWidth = 1;
-        for (let i = 0; i <= this.tileCount; i++) {
-            this.ctx.beginPath();
-            this.ctx.moveTo(i * this.gridSize, 0);
-            this.ctx.lineTo(i * this.gridSize, this.canvas.height);
-            this.ctx.stroke();
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(0, i * this.gridSize);
-            this.ctx.lineTo(this.canvas.width, i * this.gridSize);
-            this.ctx.stroke();
-        }
+        // Draw the custom board layout
+        this.drawBoard();
 
         // Draw snake
         this.snake.forEach((segment, index) => {
-            if (index === 0) {
-                // Snake head
-                this.ctx.fillStyle = '#00ff88';
-                this.ctx.shadowColor = '#00ff88';
-                this.ctx.shadowBlur = 10;
-            } else {
-                // Snake body
-                this.ctx.fillStyle = '#00aa44';
-                this.ctx.shadowColor = '#00aa44';
-                this.ctx.shadowBlur = 5;
-            }
+            if (this.isValidTile(segment.x, segment.y)) {
+                if (index === 0) {
+                    // Snake head
+                    this.ctx.fillStyle = '#ff0066';
+                    this.ctx.shadowColor = '#ff0066';
+                    this.ctx.shadowBlur = 10;
+                } else {
+                    // Snake body
+                    this.ctx.fillStyle = '#cc0044';
+                    this.ctx.shadowColor = '#cc0044';
+                    this.ctx.shadowBlur = 5;
+                }
 
-            this.ctx.fillRect(
-                segment.x * this.gridSize + 1,
-                segment.y * this.gridSize + 1,
-                this.gridSize - 2,
-                this.gridSize - 2
-            );
+                this.ctx.fillRect(
+                    segment.x * this.gridSize + 1,
+                    segment.y * this.gridSize + 1,
+                    this.gridSize - 2,
+                    this.gridSize - 2
+                );
+            }
         });
 
         // Draw food
-        this.ctx.fillStyle = '#ff0066';
-        this.ctx.shadowColor = '#ff0066';
-        this.ctx.shadowBlur = 15;
-        this.ctx.fillRect(
-            this.food.x * this.gridSize + 2,
-            this.food.y * this.gridSize + 2,
-            this.gridSize - 4,
-            this.gridSize - 4
-        );
+        if (this.food.x >= 0 && this.food.y >= 0) {
+            this.ctx.fillStyle = '#00ff88';
+            this.ctx.shadowColor = '#00ff88';
+            this.ctx.shadowBlur = 15;
+            this.ctx.fillRect(
+                this.food.x * this.gridSize + 2,
+                this.food.y * this.gridSize + 2,
+                this.gridSize - 4,
+                this.gridSize - 4
+            );
+        }
 
         // Reset shadow
         this.ctx.shadowBlur = 0;
+    }
+
+    drawBoard() {
+        // Draw valid playable areas
+        this.ctx.strokeStyle = '#002244';
+        this.ctx.lineWidth = 1;
+
+        for (let x = 0; x < this.tilesX; x++) {
+            for (let y = 0; y < this.tilesY; y++) {
+                if (this.isValidTile(x, y)) {
+                    // Draw subtle grid for playable areas
+                    this.ctx.strokeRect(
+                        x * this.gridSize,
+                        y * this.gridSize,
+                        this.gridSize,
+                        this.gridSize
+                    );
+                }
+            }
+        }
+
+        // Draw blocked areas (game preview areas)
+        this.ctx.fillStyle = 'rgba(0, 50, 100, 0.3)';
+        this.ctx.strokeStyle = '#ff0066';
+        this.ctx.lineWidth = 2;
+
+        this.blockedAreas.forEach((area, index) => {
+            const x = area.x * this.gridSize;
+            const y = area.y * this.gridSize;
+            const width = area.width * this.gridSize;
+            const height = area.height * this.gridSize;
+
+            // Fill blocked area
+            this.ctx.fillRect(x, y, width, height);
+
+            // Draw border
+            this.ctx.strokeRect(x, y, width, height);
+
+            // Add labels
+            this.ctx.fillStyle = '#ff0066';
+            this.ctx.font = '16px Orbitron';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText(
+                index === 0 ? '♚ CHESS' : '🧩 TETRIS',
+                x + width / 2,
+                y + height / 2
+            );
+        });
+
+        // Draw outer boundary
+        this.ctx.strokeStyle = '#ff0066';
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
 

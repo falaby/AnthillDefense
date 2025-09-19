@@ -717,6 +717,8 @@ body::after {
     box-shadow:
         0 0 30px rgba(255,0,102,0.6),
         inset 0 0 20px rgba(0,0,0,0.5);
+    display: block;
+    margin: 0 auto;
 }
 
 .snake-container::before {
