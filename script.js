@@ -932,12 +932,16 @@ class SnakeGame {
         this.canvas = document.getElementById('snake-board');
         this.ctx = this.canvas.getContext('2d');
 
-        this.gridSize = 20;
-        this.tilesX = this.canvas.width / this.gridSize;
-        this.tilesY = this.canvas.height / this.gridSize;
+        // Set canvas to full viewport size
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
 
-        // Define the playable area (L-shaped track around game areas)
-        this.createCustomBoard();
+        this.gridSize = 30;
+        this.tilesX = Math.floor(this.canvas.width / this.gridSize);
+        this.tilesY = Math.floor(this.canvas.height / this.gridSize);
+
+        // Create ring track around the page content
+        this.createRingTrack();
 
         this.snake = [
             {x: 5, y: 5}
@@ -959,51 +963,59 @@ class SnakeGame {
         this.draw();
     }
 
-    createCustomBoard() {
-        // Create a custom board shape that goes around the chess and tetris areas
+    resizeCanvas() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = document.documentElement.scrollHeight;
+    }
+
+    createRingTrack() {
         this.validTiles = new Set();
 
-        // Define blocked areas (where chess and tetris games would be)
-        const chessArea = {
-            x: Math.floor(this.tilesX * 0.15),
-            y: Math.floor(this.tilesY * 0.15),
-            width: Math.floor(this.tilesX * 0.35),
-            height: Math.floor(this.tilesY * 0.4)
-        };
+        // Calculate margins around content areas
+        const marginTop = 3; // tiles from top
+        const marginSide = 3; // tiles from sides
+        const marginBottom = 3; // tiles from bottom
 
-        const tetrisArea = {
-            x: Math.floor(this.tilesX * 0.15),
-            y: Math.floor(this.tilesY * 0.6),
-            width: Math.floor(this.tilesX * 0.35),
-            height: Math.floor(this.tilesY * 0.25)
-        };
+        // Define the ring track dimensions
+        const trackWidth = 4; // width of the snake track in tiles
 
-        // Add all tiles as valid, then remove blocked areas
-        for (let x = 0; x < this.tilesX; x++) {
-            for (let y = 0; y < this.tilesY; y++) {
-                // Skip border tiles
-                if (x === 0 || x === this.tilesX - 1 || y === 0 || y === this.tilesY - 1) {
-                    continue;
-                }
+        // Get approximate positions of game containers in grid coordinates
+        const chessTop = Math.floor(100 / this.gridSize); // Chess starts around 100px
+        const chessBottom = Math.floor(800 / this.gridSize); // Chess ends around 800px
+        const tetrisTop = Math.floor(900 / this.gridSize); // Tetris starts around 900px
+        const tetrisBottom = Math.floor(1600 / this.gridSize); // Tetris ends around 1600px
 
-                // Skip chess area
-                if (x >= chessArea.x && x < chessArea.x + chessArea.width &&
-                    y >= chessArea.y && y < chessArea.y + chessArea.height) {
-                    continue;
-                }
-
-                // Skip tetris area
-                if (x >= tetrisArea.x && x < tetrisArea.x + tetrisArea.width &&
-                    y >= tetrisArea.y && y < tetrisArea.y + tetrisArea.height) {
-                    continue;
-                }
-
+        // Create outer ring around entire content
+        for (let x = marginSide; x < this.tilesX - marginSide; x++) {
+            // Top border
+            for (let y = marginTop; y < marginTop + trackWidth; y++) {
+                this.validTiles.add(`${x},${y}`);
+            }
+            // Bottom border
+            for (let y = Math.max(tetrisBottom, this.tilesY - marginBottom - trackWidth); y < this.tilesY - marginBottom; y++) {
                 this.validTiles.add(`${x},${y}`);
             }
         }
 
-        // Store blocked areas for rendering
-        this.blockedAreas = [chessArea, tetrisArea];
+        // Create side borders
+        for (let y = marginTop; y < this.tilesY - marginBottom; y++) {
+            // Left side
+            for (let x = marginSide; x < marginSide + trackWidth; x++) {
+                this.validTiles.add(`${x},${y}`);
+            }
+            // Right side
+            for (let x = this.tilesX - marginSide - trackWidth; x < this.tilesX - marginSide; x++) {
+                this.validTiles.add(`${x},${y}`);
+            }
+        }
+
+        // Add vertical connector between chess and tetris on the left side
+        const connectorX = marginSide + trackWidth + 2;
+        for (let y = chessBottom; y < tetrisTop; y++) {
+            for (let x = connectorX; x < connectorX + trackWidth; x++) {
+                this.validTiles.add(`${x},${y}`);
+            }
+        }
     }
 
     isValidTile(x, y) {
@@ -1213,7 +1225,7 @@ class SnakeGame {
     }
 
     showGameOver() {
-        document.getElementById('snake-game-over').style.display = 'flex';
+        document.getElementById('snake-game-over').style.display = 'block';
     }
 
     hideGameOver() {
@@ -1227,12 +1239,11 @@ class SnakeGame {
     }
 
     draw() {
-        // Clear canvas
-        this.ctx.fillStyle = '#000511';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        // Clear canvas with transparent background
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw the custom board layout
-        this.drawBoard();
+        // Draw the track outline (subtle)
+        this.drawTrack();
 
         // Draw snake
         this.snake.forEach((segment, index) => {
@@ -1241,19 +1252,19 @@ class SnakeGame {
                     // Snake head
                     this.ctx.fillStyle = '#ff0066';
                     this.ctx.shadowColor = '#ff0066';
-                    this.ctx.shadowBlur = 10;
+                    this.ctx.shadowBlur = 15;
                 } else {
                     // Snake body
                     this.ctx.fillStyle = '#cc0044';
                     this.ctx.shadowColor = '#cc0044';
-                    this.ctx.shadowBlur = 5;
+                    this.ctx.shadowBlur = 8;
                 }
 
                 this.ctx.fillRect(
-                    segment.x * this.gridSize + 1,
-                    segment.y * this.gridSize + 1,
-                    this.gridSize - 2,
-                    this.gridSize - 2
+                    segment.x * this.gridSize + 2,
+                    segment.y * this.gridSize + 2,
+                    this.gridSize - 4,
+                    this.gridSize - 4
                 );
             }
         });
@@ -1262,12 +1273,18 @@ class SnakeGame {
         if (this.food.x >= 0 && this.food.y >= 0) {
             this.ctx.fillStyle = '#00ff88';
             this.ctx.shadowColor = '#00ff88';
-            this.ctx.shadowBlur = 15;
+            this.ctx.shadowBlur = 20;
+
+            // Animated food effect
+            const pulse = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
+            const size = (this.gridSize - 8) * pulse;
+            const offset = (this.gridSize - size) / 2;
+
             this.ctx.fillRect(
-                this.food.x * this.gridSize + 2,
-                this.food.y * this.gridSize + 2,
-                this.gridSize - 4,
-                this.gridSize - 4
+                this.food.x * this.gridSize + offset,
+                this.food.y * this.gridSize + offset,
+                size,
+                size
             );
         }
 
@@ -1275,57 +1292,30 @@ class SnakeGame {
         this.ctx.shadowBlur = 0;
     }
 
-    drawBoard() {
-        // Draw valid playable areas
-        this.ctx.strokeStyle = '#002244';
+    drawTrack() {
+        // Draw subtle track indicators
+        this.ctx.strokeStyle = 'rgba(255, 0, 102, 0.2)';
         this.ctx.lineWidth = 1;
 
+        // Only draw track borders, not fill
         for (let x = 0; x < this.tilesX; x++) {
             for (let y = 0; y < this.tilesY; y++) {
                 if (this.isValidTile(x, y)) {
-                    // Draw subtle grid for playable areas
-                    this.ctx.strokeRect(
-                        x * this.gridSize,
-                        y * this.gridSize,
-                        this.gridSize,
-                        this.gridSize
-                    );
+                    // Check if this tile is on the edge of the track
+                    const isEdge = !this.isValidTile(x-1, y) || !this.isValidTile(x+1, y) ||
+                                   !this.isValidTile(x, y-1) || !this.isValidTile(x, y+1);
+
+                    if (isEdge) {
+                        this.ctx.strokeRect(
+                            x * this.gridSize + 1,
+                            y * this.gridSize + 1,
+                            this.gridSize - 2,
+                            this.gridSize - 2
+                        );
+                    }
                 }
             }
         }
-
-        // Draw blocked areas (game preview areas)
-        this.ctx.fillStyle = 'rgba(0, 50, 100, 0.3)';
-        this.ctx.strokeStyle = '#ff0066';
-        this.ctx.lineWidth = 2;
-
-        this.blockedAreas.forEach((area, index) => {
-            const x = area.x * this.gridSize;
-            const y = area.y * this.gridSize;
-            const width = area.width * this.gridSize;
-            const height = area.height * this.gridSize;
-
-            // Fill blocked area
-            this.ctx.fillRect(x, y, width, height);
-
-            // Draw border
-            this.ctx.strokeRect(x, y, width, height);
-
-            // Add labels
-            this.ctx.fillStyle = '#ff0066';
-            this.ctx.font = '16px Orbitron';
-            this.ctx.textAlign = 'center';
-            this.ctx.fillText(
-                index === 0 ? '♚ CHESS' : '🧩 TETRIS',
-                x + width / 2,
-                y + height / 2
-            );
-        });
-
-        // Draw outer boundary
-        this.ctx.strokeStyle = '#ff0066';
-        this.ctx.lineWidth = 3;
-        this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
 

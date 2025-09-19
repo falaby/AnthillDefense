@@ -96,17 +96,20 @@
         </main>
     </div>
 
-    <!-- Snake Game Section -->
-    <div class="snake-container">
-        <header class="snake-header">
-            <h1 class="snake-title">🐍 CYBER SNAKE 🐍</h1>
+    <!-- Snake Overlay Game -->
+    <div class="snake-overlay">
+        <canvas id="snake-board"></canvas>
+
+        <!-- Snake Controls Panel -->
+        <div class="snake-controls-panel">
+            <h2 class="snake-title">🐍 CYBER SNAKE</h2>
             <div class="snake-stats">
                 <div class="stat-item">
                     <span class="stat-label">Score:</span>
                     <span id="snake-score" class="stat-value">0</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">High Score:</span>
+                    <span class="stat-label">High:</span>
                     <span id="snake-high-score" class="stat-value">0</span>
                 </div>
                 <div class="stat-item">
@@ -114,36 +117,20 @@
                     <span id="snake-speed" class="stat-value">1</span>
                 </div>
             </div>
-        </header>
-
-        <main class="snake-game-area">
-            <div class="snake-sidebar">
-                <div class="snake-controls">
-                    <button id="snake-start" class="snake-btn">Start</button>
-                    <button id="snake-pause" class="snake-btn">Pause</button>
-                    <button id="snake-reset" class="snake-btn">Reset</button>
-                </div>
-                <div class="controls-info">
-                    <h4>Controls:</h4>
-                    <p>WASD or Arrow Keys</p>
-                    <p>Navigate around the games!</p>
-                    <p>Eat food to grow</p>
-                    <p>Avoid walls & yourself</p>
-                </div>
+            <div class="snake-controls">
+                <button id="snake-start" class="snake-btn">Start</button>
+                <button id="snake-pause" class="snake-btn">Pause</button>
+                <button id="snake-reset" class="snake-btn">Reset</button>
             </div>
-
-            <div class="snake-board-container">
-                <canvas id="snake-board" width="1200" height="1000"></canvas>
-                <div id="snake-game-over" class="game-over-overlay">
-                    <h2>Game Over</h2>
-                    <p>Press Reset to play again</p>
-                </div>
-
-                <!-- Game preview areas -->
-                <div class="chess-preview-area"></div>
-                <div class="tetris-preview-area"></div>
+            <div class="snake-instructions">
+                <p>WASD/Arrows: Navigate around the games!</p>
             </div>
-        </main>
+        </div>
+
+        <div id="snake-game-over" class="snake-game-over-overlay">
+            <h2>Game Over</h2>
+            <p>Press Reset to play again</p>
+        </div>
     </div>
 
     <div class="particle-background"></div>
