@@ -45,7 +45,57 @@
             <button id="undo-move" class="game-btn">↶ Undo</button>
         </footer>
     </div>
-    
+
+    <!-- Tetris Game Section -->
+    <div class="tetris-container">
+        <header class="tetris-header">
+            <h1 class="tetris-title">🧩 TETRIS 🧩</h1>
+            <div class="tetris-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Score:</span>
+                    <span id="tetris-score" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Level:</span>
+                    <span id="tetris-level" class="stat-value">1</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Lines:</span>
+                    <span id="tetris-lines" class="stat-value">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="tetris-game-area">
+            <div class="tetris-sidebar">
+                <div class="next-piece-container">
+                    <h3>Next</h3>
+                    <canvas id="next-piece" width="120" height="120"></canvas>
+                </div>
+                <div class="tetris-controls">
+                    <button id="tetris-start" class="tetris-btn">Start</button>
+                    <button id="tetris-pause" class="tetris-btn">Pause</button>
+                    <button id="tetris-reset" class="tetris-btn">Reset</button>
+                </div>
+                <div class="controls-info">
+                    <h4>Controls:</h4>
+                    <p>← → Move</p>
+                    <p>↓ Soft Drop</p>
+                    <p>↑ Rotate</p>
+                    <p>Space Hard Drop</p>
+                </div>
+            </div>
+
+            <div class="tetris-board-container">
+                <canvas id="tetris-board" width="300" height="600"></canvas>
+                <div id="tetris-game-over" class="game-over-overlay">
+                    <h2>Game Over</h2>
+                    <p>Press Reset to play again</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
     <div class="particle-background"></div>
     <script src="script.js"></script>
 </body>
