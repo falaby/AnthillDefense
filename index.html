@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elven vs Orc Chess - Epic Battle</title>
+    <title>Classic Chess Game</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="game-container">
         <header class="game-header">
-            <h1 class="game-title">⚔️ ELVEN vs ORC CHESS ⚔️</h1>
+            <h1 class="game-title">♚ CLASSIC CHESS ♚</h1>
             <div class="game-status">
                 <div class="current-player">
-                    <span class="player-indicator white active">🧝‍♀️ Elven Army</span>
-                    <span class="player-indicator black">👹 Orc Horde</span>
+                    <span class="player-indicator white active">♔ White</span>
+                    <span class="player-indicator black">♚ Black</span>
                 </div>
                 <div class="game-info">
                     <span id="status">White's Turn</span>
@@ -31,17 +31,17 @@
         
         <aside class="captured-pieces">
             <div class="captured-section">
-                <h3>Fallen Elves</h3>
+                <h3>Captured White</h3>
                 <div id="captured-white" class="captured-container"></div>
             </div>
             <div class="captured-section">
-                <h3>Slain Orcs</h3>
+                <h3>Captured Black</h3>
                 <div id="captured-black" class="captured-container"></div>
             </div>
         </aside>
         
         <footer class="game-controls">
-            <button id="new-game" class="game-btn">⚔️ New Battle</button>
+            <button id="new-game" class="game-btn">♟ New Game</button>
             <button id="undo-move" class="game-btn">↶ Undo</button>
         </footer>
     </div>

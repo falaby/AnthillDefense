@@ -8,20 +8,20 @@ class ChessGame {
         
         this.pieceSymbols = {
             white: {
-                king: '🧙‍♂️',     // Elven Wizard King
-                queen: '🧝‍♀️',    // Elven Queen
-                rook: '🏰',      // Elven Tower
-                bishop: '🦅',    // Eagle
-                knight: '🦄',    // Unicorn
-                pawn: '🧚‍♀️'      // Fairy
+                king: '♔',
+                queen: '♕',
+                rook: '♖',
+                bishop: '♗',
+                knight: '♘',
+                pawn: '♙'
             },
             black: {
-                king: '👹',      // Orc King
-                queen: '🧙‍♀️',    // Dark Sorceress
-                rook: '🏯',      // Dark Tower
-                bishop: '🦇',    // Bat/Gargoyle
-                knight: '🐺',    // Dire Wolf
-                pawn: '👺'       // Orc Warrior
+                king: '♚',
+                queen: '♛',
+                rook: '♜',
+                bishop: '♝',
+                knight: '♞',
+                pawn: '♟'
             }
         };
         
@@ -31,14 +31,14 @@ class ChessGame {
     initializeBoard() {
         const board = Array(8).fill(null).map(() => Array(8).fill(null));
         
-        // Set up black pieces (orcs/gargoyles)
+        // Set up black pieces
         board[0] = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'].map(piece => ({
             type: piece,
             color: 'black'
         }));
         board[1] = Array(8).fill({ type: 'pawn', color: 'black' });
         
-        // Set up white pieces (elves)
+        // Set up white pieces
         board[6] = Array(8).fill({ type: 'pawn', color: 'white' });
         board[7] = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'].map(piece => ({
             type: piece,
@@ -403,12 +403,12 @@ class ChessGame {
     
     updateStatus() {
         const statusElement = document.getElementById('status');
-        const playerName = this.currentPlayer === 'white' ? "Elven Army" : "Orc Horde";
+        const playerName = this.currentPlayer === 'white' ? "White" : "Black";
         statusElement.textContent = `${playerName}'s Turn`;
         
         // Check for checkmate/stalemate (simplified)
         if (this.isGameOver()) {
-            const winner = this.currentPlayer === 'white' ? 'Orc Horde' : 'Elven Army';
+            const winner = this.currentPlayer === 'white' ? 'Black' : 'White';
             statusElement.textContent = `${winner} Wins!`;
             statusElement.style.color = '#ffd700';
             statusElement.style.animation = 'glow 1s ease-in-out infinite alternate';
