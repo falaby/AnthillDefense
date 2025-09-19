@@ -616,93 +616,76 @@ body::after {
     opacity: 0.3;
 }
 
-/* Snake Overlay Game Styles */
-.snake-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-}
-
-#snake-board {
-    position: absolute;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-}
-
-.snake-controls-panel {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: rgba(0, 10, 20, 0.9);
-    border: 2px solid #ff0066;
-    border-radius: 15px;
+/* Snake Game Styles */
+.snake-container {
+    max-width: 1400px;
+    margin: 100px auto 0;
     padding: 20px;
-    backdrop-filter: blur(10px);
-    pointer-events: auto;
-    z-index: 100;
-    min-width: 250px;
+    position: relative;
+}
+
+.snake-header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 .snake-title {
     font-family: 'Orbitron', monospace;
     font-weight: 900;
-    font-size: 1.5rem;
+    font-size: 3rem;
     color: #ff0066;
     text-shadow:
         0 0 10px #ff0066,
-        0 0 20px #ff0066;
-    margin-bottom: 15px;
-    text-align: center;
-    letter-spacing: 2px;
+        0 0 20px #ff0066,
+        0 0 30px #cc0044,
+        0 0 40px #990033,
+        2px 2px 5px rgba(0,0,0,0.8);
+    margin-bottom: 20px;
+    animation: snakeGlow 3s ease-in-out infinite alternate;
+    letter-spacing: 3px;
+}
+
+@keyframes snakeGlow {
+    from { text-shadow: 0 0 10px #ff0066, 0 0 20px #ff0066, 0 0 30px #cc0044, 0 0 40px #990033; }
+    to { text-shadow: 0 0 20px #ff0066, 0 0 30px #ff0066, 0 0 40px #cc0044, 0 0 50px #990033; }
 }
 
 .snake-stats {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    gap: 15px;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 20px;
 }
 
-.snake-stats .stat-item {
-    text-align: center;
-    flex: 1;
+.snake-game-area {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    align-items: flex-start;
 }
 
-.snake-stats .stat-label {
-    font-size: 0.8rem;
-    color: #88ccff;
-    display: block;
-}
-
-.snake-stats .stat-value {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #ff0066;
-    text-shadow: 0 0 5px #ff0066;
+.snake-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    min-width: 150px;
 }
 
 .snake-controls {
     display: flex;
-    gap: 8px;
-    margin-bottom: 15px;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .snake-btn {
-    flex: 1;
-    padding: 8px 12px;
+    padding: 12px 20px;
     font-family: 'Rajdhani', sans-serif;
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
     background: linear-gradient(45deg, #440022, #660033);
     color: #ff0066;
-    border: 1px solid #ff0066;
-    border-radius: 8px;
+    border: 2px solid #ff0066;
+    border-radius: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
     text-shadow: 0 0 5px currentColor;
@@ -712,8 +695,8 @@ body::after {
 .snake-btn:hover {
     background: linear-gradient(45deg, #ff0066, #cc0044);
     color: #000;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(255,0,102,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,0,102,0.4);
 }
 
 .snake-btn:disabled {
@@ -723,70 +706,58 @@ body::after {
     box-shadow: none;
 }
 
-.snake-instructions {
-    font-family: 'Exo 2', sans-serif;
-    font-size: 0.8rem;
-    color: #88ccff;
-    text-align: center;
-    line-height: 1.4;
+.snake-board-container {
+    position: relative;
 }
 
-.snake-game-over-overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.9);
+#snake-board {
+    background: linear-gradient(135deg, #000511 0%, #001122 100%);
     border: 3px solid #ff0066;
-    border-radius: 15px;
-    padding: 40px;
-    text-align: center;
-    color: #ff0066;
-    backdrop-filter: blur(15px);
-    display: none;
-    pointer-events: auto;
-    z-index: 200;
+    border-radius: 10px;
+    box-shadow:
+        0 0 30px rgba(255,0,102,0.6),
+        inset 0 0 20px rgba(0,0,0,0.5);
+    display: block;
+    margin: 0 auto;
 }
 
-.snake-game-over-overlay h2 {
-    font-family: 'Orbitron', monospace;
-    font-weight: 900;
-    font-size: 2rem;
-    margin-bottom: 10px;
-    text-shadow: 0 0 10px #ff0066;
-    letter-spacing: 2px;
-}
-
-.snake-game-over-overlay p {
-    font-family: 'Exo 2', sans-serif;
-    font-size: 1.2rem;
-    color: #88ccff;
-    letter-spacing: 1px;
+.snake-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,0,102,0.02) 50%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
 }
 
 @media (max-width: 768px) {
-    .snake-controls-panel {
-        top: 10px;
-        right: 10px;
-        left: 10px;
-        min-width: auto;
-        padding: 15px;
+    .snake-title {
+        font-size: 2rem;
     }
 
-    .snake-title {
-        font-size: 1.2rem;
+    .snake-game-area {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
     }
 
     .snake-stats {
         flex-direction: column;
-        gap: 8px;
+        gap: 15px;
     }
 
-    .snake-controls {
-        flex-direction: column;
+    #snake-board {
+        width: 400px;
+        height: 400px;
     }
 
-    .snake-btn {
-        padding: 12px;
+    .snake-sidebar {
+        flex-direction: row;
+        justify-content: space-around;
+        width: 100%;
+        min-width: auto;
     }
 }
